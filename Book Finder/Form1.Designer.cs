@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.APIbutton = new System.Windows.Forms.Button();
-            this.output = new System.Windows.Forms.TextBox();
             this.input = new System.Windows.Forms.TextBox();
-            this.infoBox = new System.Windows.Forms.TextBox();
             this.simpleAPI = new System.Windows.Forms.Button();
+            this.output = new System.Windows.Forms.ListBox();
+            this.infoBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // APIbutton
@@ -46,14 +46,6 @@
             this.APIbutton.UseVisualStyleBackColor = true;
             this.APIbutton.Click += new System.EventHandler(this.APIbutton_click);
             // 
-            // output
-            // 
-            this.output.AccessibleName = "output";
-            this.output.Location = new System.Drawing.Point(95, 238);
-            this.output.Name = "output";
-            this.output.Size = new System.Drawing.Size(365, 20);
-            this.output.TabIndex = 1;
-            // 
             // input
             // 
             this.input.AccessibleName = "output";
@@ -61,14 +53,6 @@
             this.input.Name = "input";
             this.input.Size = new System.Drawing.Size(365, 20);
             this.input.TabIndex = 2;
-            // 
-            // infoBox
-            // 
-            this.infoBox.AccessibleName = "output";
-            this.infoBox.Location = new System.Drawing.Point(95, 175);
-            this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(365, 20);
-            this.infoBox.TabIndex = 3;
             // 
             // simpleAPI
             // 
@@ -81,15 +65,32 @@
             this.simpleAPI.UseVisualStyleBackColor = true;
             this.simpleAPI.Click += new System.EventHandler(this.simpleAPI_Click);
             // 
+            // output
+            // 
+            this.output.AccessibleName = "output";
+            this.output.FormattingEnabled = true;
+            this.output.Location = new System.Drawing.Point(95, 210);
+            this.output.Name = "output";
+            this.output.Size = new System.Drawing.Size(365, 173);
+            this.output.TabIndex = 5;
+            // 
+            // infoBox
+            // 
+            this.infoBox.AccessibleName = "infoBox";
+            this.infoBox.Location = new System.Drawing.Point(95, 165);
+            this.infoBox.Name = "infoBox";
+            this.infoBox.Size = new System.Drawing.Size(365, 20);
+            this.infoBox.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(593, 483);
-            this.Controls.Add(this.simpleAPI);
             this.Controls.Add(this.infoBox);
-            this.Controls.Add(this.input);
             this.Controls.Add(this.output);
+            this.Controls.Add(this.simpleAPI);
+            this.Controls.Add(this.input);
             this.Controls.Add(this.APIbutton);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -102,10 +103,10 @@
         #endregion
 
         private System.Windows.Forms.Button APIbutton;
-        private System.Windows.Forms.TextBox output;
         private System.Windows.Forms.TextBox input;
-        private System.Windows.Forms.TextBox infoBox;
         private System.Windows.Forms.Button simpleAPI;
+        private System.Windows.Forms.ListBox output;
+        private System.Windows.Forms.TextBox infoBox;
     }
 }
 

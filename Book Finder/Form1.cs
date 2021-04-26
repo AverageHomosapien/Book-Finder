@@ -79,14 +79,41 @@ namespace Book_Finder
             client.BaseAddress = new Uri(URLPnP);
             String urlParameters = "?";
 
-            HttpResponseMessage response = client.GetAsync(urlParameters).Result;
-            infoBox.Text = response.Content.ReadAsStringAsync().Result; // Fills infobox with all the content
-            JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-            
-            
+            // How the JSON breaks down:
             // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
             // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
-            JObject ojObject = (JObject)joResponse["volumeInfo"];
+
+            HttpResponseMessage response = client.GetAsync(urlParameters).Result;
+            infoBox.Text = response.Content.ReadAsStringAsync().Result; // Fills infobox with all the content
+            
+            JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result); // Parses all Json content
+
+            BookObject book = new BookObject(); // Create the book object
+
+            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
+            book.title = volumeInfoObject["title"].ToString();
+            book.publisher = volumeInfoObject["publisher"].ToString();
+            book.publishedDate = volumeInfoObject["publishedDate"].ToString();
+            book.description = volumeInfoObject["description"].ToString();
+            book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
+                                            System.Convert.ToBoolean(volumeInfoObject["image"]));
+            output.Text = volumeInfoObject["pageCount"].ToString();
+            book.pageCount = Convert.ToInt32(volumeInfoObject["pageCount"].ToString());
+
+            JArray authors = (JArray)volumeInfoObject["authors"];
+            Console.WriteLine("at authors");
+            book.authors = new List<string>();
+            foreach (var author in authors)
+            {
+                Console.WriteLine(author.ToString());
+                book.authors.Add(author.ToString());
+            }
+
+            string body = string.Format("Title is {0} and publisher is {1} and description is {2} and page count is {3}",
+                                                book.title, book.publisher, book.description, book.pageCount);
+            output.Text = body;
+
+            //string title = ojObject["title"].ToString();
             //JArray array = (JArray)ojObject["title"];
 
             //JObject ojObject = (JObject)joResponse["volumeInfo"];
@@ -96,8 +123,8 @@ namespace Book_Finder
             //string title = ojObject[0].ToString();
 
             // output.Text = ojObject.ToString(); -- prints volume info
-            output.Text = array.ToString();
-            
+            //output.Text = title;
+
             if (response.IsSuccessStatusCode)
             {
                 
@@ -138,7 +165,25 @@ namespace Book_Finder
         [Serializable]
         public class BookObject
         {
-            //public string 
+            public string title { get; set; }
+            public List<string> authors { get; set; }
+            public string publisher { get; set; }
+            public string publishedDate { get; set; }
+            public string description { get; set; }
+            public ReadingModes readingModes { get; set; }
+            public int pageCount { get; set; }
         }
+
+        public class ReadingModes
+        {
+            public ReadingModes(bool text, bool image)
+            {
+                this.text = text;
+                this.image = image;
+            }
+            public bool text { get; set; }
+            public bool image { get; set; }
+        }
+
     }
 }
