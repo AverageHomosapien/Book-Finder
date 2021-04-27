@@ -38,49 +38,51 @@
             this.radioVolumeSearch = new System.Windows.Forms.RadioButton();
             this.maxResults = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.searchComboBox = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.maxResults)).BeginInit();
             this.SuspendLayout();
             // 
             // APIbutton
             // 
-            this.APIbutton.AccessibleName = "API";
-            this.APIbutton.Location = new System.Drawing.Point(219, 12);
+            this.APIbutton.AccessibleName = "Query API";
+            this.APIbutton.Location = new System.Drawing.Point(128, 11);
             this.APIbutton.Name = "APIbutton";
-            this.APIbutton.Size = new System.Drawing.Size(113, 38);
+            this.APIbutton.Size = new System.Drawing.Size(113, 40);
             this.APIbutton.TabIndex = 0;
-            this.APIbutton.Text = "API";
+            this.APIbutton.Text = "Query API";
             this.APIbutton.UseVisualStyleBackColor = true;
             this.APIbutton.Click += new System.EventHandler(this.APIbutton_Click);
             // 
             // input
             // 
             this.input.AccessibleName = "input";
-            this.input.Location = new System.Drawing.Point(136, 124);
+            this.input.Location = new System.Drawing.Point(128, 70);
             this.input.Name = "input";
-            this.input.Size = new System.Drawing.Size(420, 20);
+            this.input.Size = new System.Drawing.Size(408, 20);
             this.input.TabIndex = 2;
             // 
             // output
             // 
-            this.output.Location = new System.Drawing.Point(39, 209);
+            this.output.Location = new System.Drawing.Point(39, 153);
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.output.Size = new System.Drawing.Size(517, 231);
+            this.output.Size = new System.Drawing.Size(497, 287);
             this.output.TabIndex = 7;
             // 
             // infoBox
             // 
             this.infoBox.AccessibleName = "infoBox";
-            this.infoBox.Location = new System.Drawing.Point(136, 162);
+            this.infoBox.Location = new System.Drawing.Point(128, 108);
             this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(420, 20);
+            this.infoBox.Size = new System.Drawing.Size(408, 20);
             this.infoBox.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 165);
+            this.label1.Location = new System.Drawing.Point(36, 112);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 8;
@@ -89,7 +91,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(36, 128);
+            this.label2.Location = new System.Drawing.Point(36, 75);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(64, 13);
             this.label2.TabIndex = 9;
@@ -98,28 +100,30 @@
             // radioVolumeID
             // 
             this.radioVolumeID.AutoSize = true;
-            this.radioVolumeID.Location = new System.Drawing.Point(136, 92);
+            this.radioVolumeID.Location = new System.Drawing.Point(270, 12);
             this.radioVolumeID.Name = "radioVolumeID";
-            this.radioVolumeID.Size = new System.Drawing.Size(74, 17);
+            this.radioVolumeID.Size = new System.Drawing.Size(69, 17);
             this.radioVolumeID.TabIndex = 10;
             this.radioVolumeID.TabStop = true;
-            this.radioVolumeID.Text = "Volume ID";
+            this.radioVolumeID.Text = "Select ID";
             this.radioVolumeID.UseVisualStyleBackColor = true;
+            this.radioVolumeID.CheckedChanged += new System.EventHandler(this.radioVolumeID_CheckedChanged);
             // 
             // radioVolumeSearch
             // 
             this.radioVolumeSearch.AutoSize = true;
-            this.radioVolumeSearch.Location = new System.Drawing.Point(235, 92);
+            this.radioVolumeSearch.Location = new System.Drawing.Point(270, 35);
             this.radioVolumeSearch.Name = "radioVolumeSearch";
-            this.radioVolumeSearch.Size = new System.Drawing.Size(97, 17);
+            this.radioVolumeSearch.Size = new System.Drawing.Size(59, 17);
             this.radioVolumeSearch.TabIndex = 11;
             this.radioVolumeSearch.TabStop = true;
-            this.radioVolumeSearch.Text = "Volume Search";
+            this.radioVolumeSearch.Text = "Search";
             this.radioVolumeSearch.UseVisualStyleBackColor = true;
+            this.radioVolumeSearch.CheckedChanged += new System.EventHandler(this.radioVolumeSearch_CheckedChanged);
             // 
             // maxResults
             // 
-            this.maxResults.Location = new System.Drawing.Point(584, 124);
+            this.maxResults.Location = new System.Drawing.Point(465, 31);
             this.maxResults.Maximum = new decimal(new int[] {
             40,
             0,
@@ -131,7 +135,7 @@
             0,
             0});
             this.maxResults.Name = "maxResults";
-            this.maxResults.Size = new System.Drawing.Size(96, 20);
+            this.maxResults.Size = new System.Drawing.Size(71, 20);
             this.maxResults.TabIndex = 12;
             this.maxResults.Value = new decimal(new int[] {
             1,
@@ -142,17 +146,36 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(587, 108);
+            this.label3.Location = new System.Drawing.Point(462, 16);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(88, 13);
+            this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 13;
-            this.label3.Text = "Maximim Results:";
+            this.label3.Text = "Max Results:";
+            // 
+            // searchComboBox
+            // 
+            this.searchComboBox.FormattingEnabled = true;
+            this.searchComboBox.Location = new System.Drawing.Point(372, 31);
+            this.searchComboBox.Name = "searchComboBox";
+            this.searchComboBox.Size = new System.Drawing.Size(71, 21);
+            this.searchComboBox.TabIndex = 14;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(369, 16);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(59, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Search for:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 483);
+            this.ClientSize = new System.Drawing.Size(588, 461);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.searchComboBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.maxResults);
             this.Controls.Add(this.radioVolumeSearch);
@@ -184,6 +207,8 @@
         private System.Windows.Forms.RadioButton radioVolumeSearch;
         private System.Windows.Forms.NumericUpDown maxResults;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox searchComboBox;
+        private System.Windows.Forms.Label label4;
     }
 }
 

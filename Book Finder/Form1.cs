@@ -48,6 +48,10 @@ namespace Book_Finder
             output.Text = "";
             radioVolumeID.Checked = true;
             maxResults.Value = 10;
+
+            string[] searches = new string[] {"all", "title", "author"};
+            searchComboBox.Items.AddRange(searches);
+            searchComboBox.SelectedItem = "all";
         }
 
 
@@ -213,6 +217,18 @@ namespace Book_Finder
             }
             public bool text { get; set; }
             public bool image { get; set; }
+        }
+
+        // Search box disabled when absolute value active
+        private void radioVolumeID_CheckedChanged(object sender, EventArgs e)
+        {
+            searchComboBox.Enabled = false;
+        }
+
+        // Search box enabled when search active
+        private void radioVolumeSearch_CheckedChanged(object sender, EventArgs e)
+        {
+            searchComboBox.Enabled = true;
         }
     }
 }
