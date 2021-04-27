@@ -86,13 +86,21 @@ namespace Book_Finder
                 JArray books = (JArray)bookJson["items"];
 
                 StringBuilder sb = new StringBuilder();
-                foreach (var book in books)
+
+                if (books != null)
                 {
-                    sb.Append(ParseBook((JObject)book) + "\r\n \r\n");
+                    foreach (var book in books)
+                    {
+                        sb.Append(ParseBook((JObject)book) + "\r\n \r\n");
+                    }
+                    output.Text += sb.ToString();
+                    infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
+                }
+                else
+                {
+                    infoBox.Text = "Fail: Search didn't provide any valid results"; // Infobox fail code
                 }
 
-                output.Text += sb.ToString();
-                infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
             }
             else
             {
@@ -106,6 +114,7 @@ namespace Book_Finder
 
             // Reading and storing data
             JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
+            book.id = TryParse(bookJson, "selfLink");
             book.title = TryParse(volumeInfoObject, "title");
             book.publisher = TryParse(volumeInfoObject, "publisher");
             book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
@@ -114,6 +123,7 @@ namespace Book_Finder
                                             System.Convert.ToBoolean(volumeInfoObject["image"]));
             string pages = TryParse(volumeInfoObject, "pageCount");
             book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
+
 
             JArray authors = (JArray)volumeInfoObject["authors"];
 
@@ -125,6 +135,7 @@ namespace Book_Finder
             // Printing to screen
             StringBuilder sb = new StringBuilder();
             sb.Append("Title: " + book.title + " \r\n");
+            sb.Append("ID: " + book.id + "\r\n");
             sb.Append("Publisher: " + book.publisher + " \r\n");
             sb.Append("Published: " + book.publishedDate + " \r\n");
             sb.Append("Page Count: " + book.pageCount + " \r\n");
@@ -169,6 +180,7 @@ namespace Book_Finder
             {
                 authors = new List<string>(); // init authors
             }
+            public string id { get; set; }
             public string title { get; set; }
             public List<string> authors { get; set; }
             public string publisher { get; set; }
