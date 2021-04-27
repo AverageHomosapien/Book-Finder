@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace Book_Finder
 {
@@ -46,6 +47,7 @@ namespace Book_Finder
             infoBox.Text = "Please enter a book address or search for a book.";
             output.Text = "";
             radioVolumeID.Checked = true;
+            maxResults.Value = 10;
         }
 
 
@@ -64,7 +66,7 @@ namespace Book_Finder
             else
             //else if (radioVolumeSearch.Checked)
             {
-                urlParameters = "?q=" + input.Text;
+                urlParameters = "?q=" + input.Text + "&maxResults=" + maxResults.Value;
             }
 
             Console.WriteLine("User entered: " + urlParameters);
@@ -114,7 +116,14 @@ namespace Book_Finder
 
             // Reading and storing data
             JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
-            book.id = TryParse(bookJson, "selfLink");
+            //book.id = TryParse(bookJson, "selfLink");
+
+            MatchCollection mc = Regex.Matches(bookJson["selfLink"].ToString(), "(?<=volumes/).*");
+            foreach (Match m in mc)
+            {
+                book.id += m;
+            }
+
             book.title = TryParse(volumeInfoObject, "title");
             book.publisher = TryParse(volumeInfoObject, "publisher");
             book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
@@ -127,15 +136,19 @@ namespace Book_Finder
 
             JArray authors = (JArray)volumeInfoObject["authors"];
 
-            foreach (var author in authors)
+            if (authors != null)
             {
-                book.authors.Add(author.ToString());
+                foreach (var author in authors)
+                {
+                    book.authors.Add(author.ToString());
+                }
             }
+            
 
             // Printing to screen
             StringBuilder sb = new StringBuilder();
             sb.Append("Title: " + book.title + " \r\n");
-            sb.Append("ID: " + book.id + "\r\n");
+            sb.Append("Volume ID: " + book.id + "\r\n");
             sb.Append("Publisher: " + book.publisher + " \r\n");
             sb.Append("Published: " + book.publishedDate + " \r\n");
             sb.Append("Page Count: " + book.pageCount + " \r\n");
