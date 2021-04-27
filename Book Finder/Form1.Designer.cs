@@ -34,6 +34,8 @@
             this.infoBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.radioVolumeID = new System.Windows.Forms.RadioButton();
+            this.radioVolumeSearch = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // APIbutton
@@ -54,7 +56,6 @@
             this.input.Name = "input";
             this.input.Size = new System.Drawing.Size(420, 20);
             this.input.TabIndex = 2;
-            this.input.Text = "s1gVAAAAYAAK";
             // 
             // output
             // 
@@ -78,9 +79,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(36, 165);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 13);
+            this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 8;
-            this.label1.Text = "Request Success:";
+            this.label1.Text = "HTTP Request:";
             // 
             // label2
             // 
@@ -91,11 +92,35 @@
             this.label2.TabIndex = 9;
             this.label2.Text = "Input String:";
             // 
+            // radioVolumeID
+            // 
+            this.radioVolumeID.AutoSize = true;
+            this.radioVolumeID.Location = new System.Drawing.Point(136, 92);
+            this.radioVolumeID.Name = "radioVolumeID";
+            this.radioVolumeID.Size = new System.Drawing.Size(74, 17);
+            this.radioVolumeID.TabIndex = 10;
+            this.radioVolumeID.TabStop = true;
+            this.radioVolumeID.Text = "Volume ID";
+            this.radioVolumeID.UseVisualStyleBackColor = true;
+            // 
+            // radioVolumeSearch
+            // 
+            this.radioVolumeSearch.AutoSize = true;
+            this.radioVolumeSearch.Location = new System.Drawing.Point(235, 92);
+            this.radioVolumeSearch.Name = "radioVolumeSearch";
+            this.radioVolumeSearch.Size = new System.Drawing.Size(97, 17);
+            this.radioVolumeSearch.TabIndex = 11;
+            this.radioVolumeSearch.TabStop = true;
+            this.radioVolumeSearch.Text = "Volume Search";
+            this.radioVolumeSearch.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(593, 483);
+            this.Controls.Add(this.radioVolumeSearch);
+            this.Controls.Add(this.radioVolumeID);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.output);
@@ -118,6 +143,8 @@
         private System.Windows.Forms.TextBox infoBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RadioButton radioVolumeID;
+        private System.Windows.Forms.RadioButton radioVolumeSearch;
     }
 }
 

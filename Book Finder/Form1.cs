@@ -18,91 +18,147 @@ namespace Book_Finder
     {
         // https://developers.google.com/books/docs/v1/getting_started#REST
         public const string myLib = "https://www.googleapis.com/books/v1/mylibrary/";
-        public const string URL = "https://www.googleapis.com/books/v1/volumes/";
+        public const string bookURL = "https://www.googleapis.com/books/v1/volumes/";
+        public const string searchURL = "https://www.googleapis.com/books/v1/volumes";
         public const string URLPnP = "https://www.googleapis.com/books/v1/volumes/s1gVAAAAYAAK"; // Jane Austin PNP
         // Search for quilting - https://www.googleapis.com/books/v1/volumes?q=quilting
         // Search Harry Potter https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
         //Use a comma-separated list to select multiple fields.
 
+        // How the JSON breaks down for a single volume:
+        // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
+        // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
 
-        HttpClient client = new HttpClient();
 
-        public Form1()
+        HttpClient bookClient = new HttpClient();
+        HttpClient searchClient = new HttpClient();
+
+        public Form1() // Don't close Form1, just hide if switching windows
         {
             InitializeComponent();
-            client.BaseAddress = new Uri(URL);
+            bookClient.BaseAddress = new Uri(bookURL);
+            searchClient.BaseAddress = new Uri(searchURL);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            input.Text = "s1gVAAAAYAAK";
+            infoBox.Text = "Please enter a book address or search for a book.";
             output.Text = "";
+            radioVolumeID.Checked = true;
         }
 
 
         // API Button
         private void APIbutton_Click(object sender, EventArgs e)
         {
-            //string searchedURL = URL + ;
-            String urlParameters = input.Text;//+ "?"
-            Console.WriteLine("Searched for: " + urlParameters);
+            output.Text = "";
 
-            // How the JSON breaks down:
-            // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
-            // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
+            String urlParameters;
+            HttpResponseMessage response;
 
-            HttpResponseMessage response = client.GetAsync(urlParameters).Result;
+            if (radioVolumeID.Checked)
+            {
+                urlParameters = input.Text;//+ "?"
+            }
+            else
+            //else if (radioVolumeSearch.Checked)
+            {
+                urlParameters = "?q=" + input.Text;
+            }
 
+            Console.WriteLine("User entered: " + urlParameters);
+            response = bookClient.GetAsync(urlParameters).Result;
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && radioVolumeID.Checked)
             {
                 JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result); // Parses all Json content
 
-                BookObject book = new BookObject(); // Create the book object
-                
-                // Reading and storing data
-                JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
-                book.title = volumeInfoObject["title"].ToString();
-                book.publisher = volumeInfoObject["publisher"].ToString();
-                book.publishedDate = volumeInfoObject["publishedDate"].ToString();
-                book.description = volumeInfoObject["description"].ToString();
-                book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
-                                                System.Convert.ToBoolean(volumeInfoObject["image"]));
-                output.Text = volumeInfoObject["pageCount"].ToString();
-                book.pageCount = Convert.ToInt32(volumeInfoObject["pageCount"].ToString());
+                output.Text = ParseBook(bookJson);
+                infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
+            }
+            else if (response.IsSuccessStatusCode && radioVolumeSearch.Checked)
+            {
+                JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                JArray authors = (JArray)volumeInfoObject["authors"];
+                output.Text = "Number of records: " + bookJson["totalItems"].ToString() + "\r\n \r\n";
 
-                foreach (var author in authors)
-                {
-                    book.authors.Add(author.ToString());
-                }
+                JArray books = (JArray)bookJson["items"];
 
-                // Printing to screen
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Title: " + book.title + " \r\n");
-                sb.Append("Publisher: " + book.publisher + " \r\n");
-                sb.Append("Published: " + book.publishedDate + " \r\n");
-                sb.Append("Page Count: " + book.pageCount + " \r\n");
-
-                sb.Append("Authors: ");
-                foreach (string author in authors)
+                foreach (var book in books)
                 {
-                    sb.Append(author + ", ");
+                    sb.Append(ParseBook((JObject)book) + "\r\n \r\n");
                 }
-                sb.Append(" \r\n");
-                sb.Append("Descrption: " + book.description + " \r\n");
-                output.Text = sb.ToString();
 
-                infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Fills infobox with the book content
+                output.Text += sb.ToString();
+                infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
             }
             else
             {
-                infoBox.Text = "Fail: " + (int)response.StatusCode + " " + response.ReasonPhrase;
+                infoBox.Text = "Fail: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
+            }
+        }
+
+        public static string ParseBook(JObject bookJson)
+        {
+            BookObject book = new BookObject(); // Create the book object
+
+            // Reading and storing data
+            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
+            book.title = TryParse(volumeInfoObject, "title");
+            book.publisher = TryParse(volumeInfoObject, "publisher");
+            book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
+            book.description = TryParse(volumeInfoObject, "description");
+            book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
+                                            System.Convert.ToBoolean(volumeInfoObject["image"]));
+            string pages = TryParse(volumeInfoObject, "pageCount");
+            book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
+
+            JArray authors = (JArray)volumeInfoObject["authors"];
+
+            foreach (var author in authors)
+            {
+                book.authors.Add(author.ToString());
             }
 
-            //response.Dispose();
-            //client.Dispose();
-            //client.DeleteAsync(searchedURL);
+            // Printing to screen
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Title: " + book.title + " \r\n");
+            sb.Append("Publisher: " + book.publisher + " \r\n");
+            sb.Append("Published: " + book.publishedDate + " \r\n");
+            sb.Append("Page Count: " + book.pageCount + " \r\n");
+
+            sb.Append("Authors: ");
+            foreach (string author in authors)
+            {
+                sb.Append(author + ", ");
+            }
+            sb.Append(" \r\n");
+            sb.Append("Descrption: " + book.description + " \r\n");
+            return sb.ToString();
+        }
+
+        // Have a TryParse method to iteratively check if parsing available for each option
+        public static string TryParse(JObject bookJson, string toParse)
+        {
+            string parsedString;
+            try
+            {
+                if (bookJson[toParse] != null)
+                {
+                    parsedString = bookJson[toParse].ToString();
+                }
+                else
+                {
+                    parsedString = "";
+                }
+            }
+            catch
+            {
+                return "";
+            }
+            return parsedString;
         }
 
 
