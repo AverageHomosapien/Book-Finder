@@ -30,6 +30,7 @@ namespace Book_Finder
         public Form1()
         {
             InitializeComponent();
+            client.BaseAddress = new Uri(URL);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -41,9 +42,9 @@ namespace Book_Finder
         // API Button
         private void APIbutton_Click(object sender, EventArgs e)
         {
-            string searchedURL = URL + input.Text;
-            client.BaseAddress = new Uri(searchedURL);
-            String urlParameters = "?";
+            //string searchedURL = URL + ;
+            String urlParameters = input.Text;//+ "?"
+            Console.WriteLine("Searched for: " + urlParameters);
 
             // How the JSON breaks down:
             // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
@@ -54,13 +55,11 @@ namespace Book_Finder
 
             if (response.IsSuccessStatusCode)
             {
-
-                infoBox.Text = response.Content.ReadAsStringAsync().Result; // Fills infobox with the book content
-
                 JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result); // Parses all Json content
 
                 BookObject book = new BookObject(); // Create the book object
-
+                
+                // Reading and storing data
                 JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
                 book.title = volumeInfoObject["title"].ToString();
                 book.publisher = volumeInfoObject["publisher"].ToString();
@@ -78,26 +77,34 @@ namespace Book_Finder
                     book.authors.Add(author.ToString());
                 }
 
+                // Printing to screen
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Title: " + book.title + " \n");
-                sb.Append("Publisher: " + book.publisher + " \n");
-                sb.Append("Published: " + book.publishedDate + " \n");
-                sb.Append("Page Count: " + book.pageCount + " \n");
-                sb.Append("Authors: " + book.authors + " \n");
-                sb.Append("Descrption:" + book.description + " \n");
+                sb.Append("Title: " + book.title + " \r\n");
+                sb.Append("Publisher: " + book.publisher + " \r\n");
+                sb.Append("Published: " + book.publishedDate + " \r\n");
+                sb.Append("Page Count: " + book.pageCount + " \r\n");
+
+                sb.Append("Authors: ");
+                foreach (string author in authors)
+                {
+                    sb.Append(author + ", ");
+                }
+                sb.Append(" \r\n");
+                sb.Append("Descrption: " + book.description + " \r\n");
                 output.Text = sb.ToString();
+
+                infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Fills infobox with the book content
             }
             else
             {
-                output.Text = "Fail: " + (int)response.StatusCode + " " + response.ReasonPhrase;
+                infoBox.Text = "Fail: " + (int)response.StatusCode + " " + response.ReasonPhrase;
             }
+
+            //response.Dispose();
+            //client.Dispose();
+            //client.DeleteAsync(searchedURL);
         }
 
-        public class DataObject
-        {
-            public string Name { get; set; }
-            public string Value { get; set; }
-        }
 
         [Serializable]
         public class BookObject
@@ -115,6 +122,7 @@ namespace Book_Finder
             public int pageCount { get; set; }
         }
 
+        [Serializable]
         public class ReadingModes
         {
             public ReadingModes(bool text, bool image)
