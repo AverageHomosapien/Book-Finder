@@ -40,6 +40,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.searchComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.resultsListBox = new System.Windows.Forms.CheckedListBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.allResultsBox = new System.Windows.Forms.Button();
+            this.noneResultsBox = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.maxResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,7 +72,7 @@
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.output.Size = new System.Drawing.Size(497, 287);
+            this.output.Size = new System.Drawing.Size(497, 281);
             this.output.TabIndex = 7;
             // 
             // infoBox
@@ -146,7 +150,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(462, 16);
+            this.label3.Location = new System.Drawing.Point(462, 14);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 13;
@@ -163,17 +167,58 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(369, 16);
+            this.label4.Location = new System.Drawing.Point(369, 14);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(59, 13);
             this.label4.TabIndex = 15;
             this.label4.Text = "Search for:";
             // 
+            // resultsListBox
+            // 
+            this.resultsListBox.FormattingEnabled = true;
+            this.resultsListBox.Location = new System.Drawing.Point(557, 70);
+            this.resultsListBox.Name = "resultsListBox";
+            this.resultsListBox.Size = new System.Drawing.Size(139, 304);
+            this.resultsListBox.TabIndex = 16;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(554, 54);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(87, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Results to Show:";
+            // 
+            // allResultsBox
+            // 
+            this.allResultsBox.Location = new System.Drawing.Point(557, 380);
+            this.allResultsBox.Name = "allResultsBox";
+            this.allResultsBox.Size = new System.Drawing.Size(139, 23);
+            this.allResultsBox.TabIndex = 18;
+            this.allResultsBox.Text = "Select all Results";
+            this.allResultsBox.UseVisualStyleBackColor = true;
+            this.allResultsBox.Click += new System.EventHandler(this.allResultsBox_Click);
+            // 
+            // noneResultsBox
+            // 
+            this.noneResultsBox.Location = new System.Drawing.Point(557, 409);
+            this.noneResultsBox.Name = "noneResultsBox";
+            this.noneResultsBox.Size = new System.Drawing.Size(139, 23);
+            this.noneResultsBox.TabIndex = 19;
+            this.noneResultsBox.Text = "Deselect all Results";
+            this.noneResultsBox.UseVisualStyleBackColor = true;
+            this.noneResultsBox.Click += new System.EventHandler(this.noneResultsBox_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 461);
+            this.ClientSize = new System.Drawing.Size(739, 447);
+            this.Controls.Add(this.noneResultsBox);
+            this.Controls.Add(this.allResultsBox);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.resultsListBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.searchComboBox);
             this.Controls.Add(this.label3);
@@ -209,6 +254,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox searchComboBox;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckedListBox resultsListBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button allResultsBox;
+        private System.Windows.Forms.Button noneResultsBox;
     }
 }
 

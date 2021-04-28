@@ -32,6 +32,8 @@ namespace Book_Finder
         // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
         // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
 
+        
+
 
         HttpClient bookClient = new HttpClient();
         HttpClient searchClient = new HttpClient();
@@ -51,9 +53,18 @@ namespace Book_Finder
             radioVolumeID.Checked = true;
             maxResults.Value = 10;
 
-            string[] searches = new string[] {"all", "title", "author"};
-            searchComboBox.Items.AddRange(searches);
+            // Add search items and select default
+            string[] searchItems = new string[] {"all", "title", "author"};
+            searchComboBox.Items.AddRange(searchItems);
             searchComboBox.SelectedItem = "all";
+
+            // Add results and select all items
+            string[] resultItems = new string[] { "Title", "Volume ID", "Publisher", "Published Date", "Page Count", "Authors", "Description" };
+            resultsListBox.Items.AddRange(resultItems);
+            for (int i = 0; i < resultsListBox.Items.Count; i++)
+            {
+                resultsListBox.SetItemChecked(i, true);
+            }
         }
 
 
@@ -72,7 +83,7 @@ namespace Book_Finder
             else
             //else if (radioVolumeSearch.Checked)
             {
-                string searchFor = (searchComboBox.SelectedItem).ToString();
+                string searchFor = searchComboBox.SelectedItem.ToString();
                 Console.WriteLine("Searching for " + searchFor);
 
                 urlParameters = "?q="; // Search param
@@ -135,61 +146,90 @@ namespace Book_Finder
             }
         }
 
-        public static string ParseBook(JObject bookJson)
+        public string ParseBook(JObject bookJson)
         {
             BookObject book = new BookObject(); // Create the book object
 
-            // Reading and storing data
-            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"];
-            //book.id = TryParse(bookJson, "selfLink");
+            
+            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"]; // Reading and storing data
 
-            MatchCollection mc = Regex.Matches(bookJson["selfLink"].ToString(), "(?<=volumes/).*");
-            foreach (Match m in mc)
+            StringBuilder sb = new StringBuilder(); // Printing to screen
+
+            bool[] resultBool = new bool[resultsListBox.Items.Count];
+            for (int i = 0; i <= resultsListBox.Items.Count - 1; i++)
             {
-                book.id += m;
+                resultBool[i] = resultsListBox.GetItemChecked(i);
             }
 
-            book.title = TryParse(volumeInfoObject, "title");
-            book.publisher = TryParse(volumeInfoObject, "publisher");
-            book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
-            book.description = TryParse(volumeInfoObject, "description");
-            book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
-                                            System.Convert.ToBoolean(volumeInfoObject["image"]));
-            string pages = TryParse(volumeInfoObject, "pageCount");
-            book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
-
-
-            JArray authors = (JArray)volumeInfoObject["authors"];
-
-            if (authors != null)
+            if (resultBool[0])
             {
-                foreach (var author in authors)
+                book.title = TryParse(volumeInfoObject, "title");
+                sb.Append("Title: " + book.title + " \r\n");
+            }
+
+            if (resultBool[1])
+            {
+                MatchCollection mc = Regex.Matches(bookJson["selfLink"].ToString(), "(?<=volumes/).*"); // Parsing ID
+                foreach (Match m in mc)
                 {
-                    book.authors.Add(author.ToString());
+                    book.id += m;
+                }
+                sb.Append("Volume ID: " + book.id + "\r\n");
+            }
+
+            if (resultBool[2])
+            {
+                book.publisher = TryParse(volumeInfoObject, "publisher");
+                sb.Append("Publisher: " + book.publisher + " \r\n");
+            }
+
+            if (resultBool[3])
+            {
+                book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
+                sb.Append("Published: " + book.publishedDate + " \r\n");
+            }
+
+            if (resultBool[4])
+            {
+                string pages = TryParse(volumeInfoObject, "pageCount");
+                book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
+                sb.Append("Page Count: " + book.pageCount + " \r\n");
+            }
+
+            if (resultBool[5])
+            {
+                JArray authors = (JArray)volumeInfoObject["authors"];
+
+                if (authors != null)
+                {
+                    foreach (var author in authors)
+                    {
+                        book.authors.Add(author.ToString());
+                    }
+                }
+                sb.Append("Authors: ");
+                foreach (string author in authors)
+                {
+                    sb.Append(author + ", ");
                 }
             }
             
-
-            // Printing to screen
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Title: " + book.title + " \r\n");
-            sb.Append("Volume ID: " + book.id + "\r\n");
-            sb.Append("Publisher: " + book.publisher + " \r\n");
-            sb.Append("Published: " + book.publishedDate + " \r\n");
-            sb.Append("Page Count: " + book.pageCount + " \r\n");
-
-            sb.Append("Authors: ");
-            foreach (string author in authors)
+            if (resultBool[6])
             {
-                sb.Append(author + ", ");
+                book.description = TryParse(volumeInfoObject, "description");
+                sb.Append(" \r\n");
+                sb.Append("Description: " + book.description + " \r\n");
             }
-            sb.Append(" \r\n");
-            sb.Append("Descrption: " + book.description + " \r\n");
+
+            /*
+            book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
+                                        System.Convert.ToBoolean(volumeInfoObject["image"]));
+            */
             return sb.ToString();
         }
 
         // Have a TryParse method to iteratively check if parsing available for each option
-        public static string TryParse(JObject bookJson, string toParse)
+        public string TryParse(JObject bookJson, string toParse)
         {
             string parsedString;
             try
@@ -250,6 +290,22 @@ namespace Book_Finder
         private void radioVolumeSearch_CheckedChanged(object sender, EventArgs e)
         {
             searchComboBox.Enabled = true;
+        }
+
+        private void allResultsBox_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < resultsListBox.Items.Count; i++)
+            {
+                resultsListBox.SetItemChecked(i, true);
+            }
+        }
+
+        private void noneResultsBox_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < resultsListBox.Items.Count; i++)
+            {
+                resultsListBox.SetItemChecked(i, false);
+            }
         }
     }
 }
