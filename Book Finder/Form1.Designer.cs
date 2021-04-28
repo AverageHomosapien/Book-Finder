@@ -187,7 +187,7 @@
             this.Controls.Add(this.input);
             this.Controls.Add(this.APIbutton);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Search Form";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.maxResults)).EndInit();
             this.ResumeLayout(false);
