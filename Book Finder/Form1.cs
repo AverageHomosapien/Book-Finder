@@ -26,6 +26,8 @@ namespace Book_Finder
         // Search Harry Potter https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
         //Use a comma-separated list to select multiple fields.
 
+        //https://www.googleapis.com/books/v1/volumes?q=intitle:%22harry+potter%22
+
         // How the JSON breaks down for a single volume:
         // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
         // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
@@ -70,7 +72,26 @@ namespace Book_Finder
             else
             //else if (radioVolumeSearch.Checked)
             {
-                urlParameters = "?q=" + input.Text + "&maxResults=" + maxResults.Value;
+                string searchFor = (searchComboBox.SelectedItem).ToString();
+                Console.WriteLine("Searching for " + searchFor);
+
+                urlParameters = "?q="; // Search param
+
+                if (searchFor == "author")
+                {
+                    urlParameters += "inauthor:" + input.Text;
+                }
+                else if (searchFor == "title")
+                {
+                    //https://www.googleapis.com/books/v1/volumes?q=intitle:%22harry+potter%22
+                    urlParameters += "intitle:" + input.Text;
+                }
+                else
+                {
+                    urlParameters += input.Text;
+                }
+
+                urlParameters += "&maxResults=" + maxResults.Value; // Adding max results
             }
 
             Console.WriteLine("User entered: " + urlParameters);
