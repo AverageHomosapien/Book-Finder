@@ -196,7 +196,7 @@
             this.allResultsBox.Name = "allResultsBox";
             this.allResultsBox.Size = new System.Drawing.Size(139, 23);
             this.allResultsBox.TabIndex = 18;
-            this.allResultsBox.Text = "Select all Results";
+            this.allResultsBox.Text = "Select all";
             this.allResultsBox.UseVisualStyleBackColor = true;
             this.allResultsBox.Click += new System.EventHandler(this.allResultsBox_Click);
             // 
@@ -206,7 +206,7 @@
             this.noneResultsBox.Name = "noneResultsBox";
             this.noneResultsBox.Size = new System.Drawing.Size(139, 23);
             this.noneResultsBox.TabIndex = 19;
-            this.noneResultsBox.Text = "Deselect all Results";
+            this.noneResultsBox.Text = "Deselect all";
             this.noneResultsBox.UseVisualStyleBackColor = true;
             this.noneResultsBox.Click += new System.EventHandler(this.noneResultsBox_Click);
             // 

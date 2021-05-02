@@ -1,17 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Book_Finder
 {
@@ -22,9 +15,9 @@ namespace Book_Finder
         public const string bookURL = "https://www.googleapis.com/books/v1/volumes/";
         public const string searchURL = "https://www.googleapis.com/books/v1/volumes";
         public const string URLPnP = "https://www.googleapis.com/books/v1/volumes/s1gVAAAAYAAK"; // Jane Austin PNP
-        // Search for quilting - https://www.googleapis.com/books/v1/volumes?q=quilting
-        // Search Harry Potter https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
-        //Use a comma-separated list to select multiple fields.
+                                                                                                 // Search for quilting - https://www.googleapis.com/books/v1/volumes?q=quilting
+                                                                                                 // Search Harry Potter https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
+                                                                                                 //Use a comma-separated list to select multiple fields.
 
         //https://www.googleapis.com/books/v1/volumes?q=intitle:%22harry+potter%22
 
@@ -32,7 +25,7 @@ namespace Book_Finder
         // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
         // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
 
-        
+
 
 
         HttpClient bookClient = new HttpClient();
@@ -47,14 +40,15 @@ namespace Book_Finder
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            input.Text = "s1gVAAAAYAAK";
+            //input.Text = "s1gVAAAAYAAK";
+
             infoBox.Text = "Please enter a book address or search for a book.";
             output.Text = "";
             radioVolumeID.Checked = true;
             maxResults.Value = 10;
 
             // Add search items and select default
-            string[] searchItems = new string[] {"all", "title", "author"};
+            string[] searchItems = new string[] { "all", "title", "author" };
             searchComboBox.Items.AddRange(searchItems);
             searchComboBox.SelectedItem = "all";
 
@@ -150,7 +144,7 @@ namespace Book_Finder
         {
             BookObject book = new BookObject(); // Create the book object
 
-            
+
             JObject volumeInfoObject = (JObject)bookJson["volumeInfo"]; // Reading and storing data
 
             StringBuilder sb = new StringBuilder(); // Printing to screen
@@ -213,7 +207,7 @@ namespace Book_Finder
                     sb.Append(author + ", ");
                 }
             }
-            
+
             if (resultBool[6])
             {
                 book.description = TryParse(volumeInfoObject, "description");
@@ -307,5 +301,6 @@ namespace Book_Finder
                 resultsListBox.SetItemChecked(i, false);
             }
         }
+
     }
 }
