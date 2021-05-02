@@ -44,6 +44,10 @@
             this.label5 = new System.Windows.Forms.Label();
             this.allResultsBox = new System.Windows.Forms.Button();
             this.noneResultsBox = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.availabilityListBox = new System.Windows.Forms.CheckedListBox();
+            this.deselectAvailabilityButton = new System.Windows.Forms.Button();
+            this.selectAvailabilityButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.maxResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,7 +76,7 @@
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.output.Size = new System.Drawing.Size(497, 281);
+            this.output.Size = new System.Drawing.Size(497, 253);
             this.output.TabIndex = 7;
             // 
             // infoBox
@@ -104,7 +108,7 @@
             // radioVolumeID
             // 
             this.radioVolumeID.AutoSize = true;
-            this.radioVolumeID.Location = new System.Drawing.Point(270, 12);
+            this.radioVolumeID.Location = new System.Drawing.Point(270, 35);
             this.radioVolumeID.Name = "radioVolumeID";
             this.radioVolumeID.Size = new System.Drawing.Size(69, 17);
             this.radioVolumeID.TabIndex = 10;
@@ -116,7 +120,7 @@
             // radioVolumeSearch
             // 
             this.radioVolumeSearch.AutoSize = true;
-            this.radioVolumeSearch.Location = new System.Drawing.Point(270, 35);
+            this.radioVolumeSearch.Location = new System.Drawing.Point(270, 11);
             this.radioVolumeSearch.Name = "radioVolumeSearch";
             this.radioVolumeSearch.Size = new System.Drawing.Size(59, 17);
             this.radioVolumeSearch.TabIndex = 11;
@@ -176,23 +180,23 @@
             // resultsListBox
             // 
             this.resultsListBox.FormattingEnabled = true;
-            this.resultsListBox.Location = new System.Drawing.Point(557, 70);
+            this.resultsListBox.Location = new System.Drawing.Point(557, 31);
             this.resultsListBox.Name = "resultsListBox";
-            this.resultsListBox.Size = new System.Drawing.Size(139, 304);
+            this.resultsListBox.Size = new System.Drawing.Size(139, 124);
             this.resultsListBox.TabIndex = 16;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(554, 54);
+            this.label5.Location = new System.Drawing.Point(554, 15);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(87, 13);
+            this.label5.Size = new System.Drawing.Size(56, 13);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Results to Show:";
+            this.label5.Text = "Book Info:";
             // 
             // allResultsBox
             // 
-            this.allResultsBox.Location = new System.Drawing.Point(557, 380);
+            this.allResultsBox.Location = new System.Drawing.Point(557, 167);
             this.allResultsBox.Name = "allResultsBox";
             this.allResultsBox.Size = new System.Drawing.Size(139, 23);
             this.allResultsBox.TabIndex = 18;
@@ -202,7 +206,7 @@
             // 
             // noneResultsBox
             // 
-            this.noneResultsBox.Location = new System.Drawing.Point(557, 409);
+            this.noneResultsBox.Location = new System.Drawing.Point(557, 196);
             this.noneResultsBox.Name = "noneResultsBox";
             this.noneResultsBox.Size = new System.Drawing.Size(139, 23);
             this.noneResultsBox.TabIndex = 19;
@@ -210,11 +214,52 @@
             this.noneResultsBox.UseVisualStyleBackColor = true;
             this.noneResultsBox.Click += new System.EventHandler(this.noneResultsBox_Click);
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(554, 234);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(80, 13);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "Availability Info:";
+            // 
+            // availabilityListBox
+            // 
+            this.availabilityListBox.FormattingEnabled = true;
+            this.availabilityListBox.Location = new System.Drawing.Point(557, 250);
+            this.availabilityListBox.Name = "availabilityListBox";
+            this.availabilityListBox.Size = new System.Drawing.Size(139, 94);
+            this.availabilityListBox.TabIndex = 20;
+            // 
+            // deselectAvailabilityButton
+            // 
+            this.deselectAvailabilityButton.Location = new System.Drawing.Point(557, 383);
+            this.deselectAvailabilityButton.Name = "deselectAvailabilityButton";
+            this.deselectAvailabilityButton.Size = new System.Drawing.Size(139, 23);
+            this.deselectAvailabilityButton.TabIndex = 23;
+            this.deselectAvailabilityButton.Text = "Deselect all";
+            this.deselectAvailabilityButton.UseVisualStyleBackColor = true;
+            this.deselectAvailabilityButton.Click += new System.EventHandler(this.deselectAvailabilityButton_Click);
+            // 
+            // selectAvailabilityButton
+            // 
+            this.selectAvailabilityButton.Location = new System.Drawing.Point(557, 354);
+            this.selectAvailabilityButton.Name = "selectAvailabilityButton";
+            this.selectAvailabilityButton.Size = new System.Drawing.Size(139, 23);
+            this.selectAvailabilityButton.TabIndex = 22;
+            this.selectAvailabilityButton.Text = "Select all";
+            this.selectAvailabilityButton.UseVisualStyleBackColor = true;
+            this.selectAvailabilityButton.Click += new System.EventHandler(this.selectAvailabilityButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(739, 447);
+            this.ClientSize = new System.Drawing.Size(739, 429);
+            this.Controls.Add(this.deselectAvailabilityButton);
+            this.Controls.Add(this.selectAvailabilityButton);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.availabilityListBox);
             this.Controls.Add(this.noneResultsBox);
             this.Controls.Add(this.allResultsBox);
             this.Controls.Add(this.label5);
@@ -258,6 +303,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button allResultsBox;
         private System.Windows.Forms.Button noneResultsBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckedListBox availabilityListBox;
+        private System.Windows.Forms.Button deselectAvailabilityButton;
+        private System.Windows.Forms.Button selectAvailabilityButton;
     }
 }
 

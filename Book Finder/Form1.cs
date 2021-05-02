@@ -8,43 +8,40 @@ using System.Windows.Forms;
 
 namespace Book_Finder
 {
+    // Book form searcher
     public partial class Form1 : Form
     {
-        // https://developers.google.com/books/docs/v1/getting_started#REST
+        /* Info and links:
+         * Link to documentation:
+         * https://developers.google.com/books/docs/v1/getting_started#REST 
+         * Search Harry Potter by title:
+         * https://www.googleapis.com/books/v1/volumes?q=intitle:%22harry+potter%22 
+         * 
+         * JSON breakdown for a single volume:
+         * Bit of meta data; VolumeInfo - info on book; sale info - how much and site;
+         * .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
+        */
+
         public const string myLib = "https://www.googleapis.com/books/v1/mylibrary/";
         public const string bookURL = "https://www.googleapis.com/books/v1/volumes/";
         public const string searchURL = "https://www.googleapis.com/books/v1/volumes";
-        public const string URLPnP = "https://www.googleapis.com/books/v1/volumes/s1gVAAAAYAAK"; // Jane Austin PNP
-                                                                                                 // Search for quilting - https://www.googleapis.com/books/v1/volumes?q=quilting
-                                                                                                 // Search Harry Potter https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
-                                                                                                 //Use a comma-separated list to select multiple fields.
-
-        //https://www.googleapis.com/books/v1/volumes?q=intitle:%22harry+potter%22
-
-        // How the JSON breaks down for a single volume:
-        // a lil bit of meta data; VolumeInfo - info on book; sale info - how much and site;
-        // .....access info - country and viewability (PDF and EPUB); -- all ojObject parse
-
-
-
 
         HttpClient bookClient = new HttpClient();
         HttpClient searchClient = new HttpClient();
 
-        public Form1() // Don't close Form1, just hide if switching windows
+        public Form1()
         {
             InitializeComponent();
             bookClient.BaseAddress = new Uri(bookURL);
             searchClient.BaseAddress = new Uri(searchURL);
         }
 
+        // Set up Form
         private void Form1_Load(object sender, EventArgs e)
         {
-            //input.Text = "s1gVAAAAYAAK";
-
             infoBox.Text = "Please enter a book address or search for a book.";
             output.Text = "";
-            radioVolumeID.Checked = true;
+            radioVolumeSearch.Checked = true;
             maxResults.Value = 10;
 
             // Add search items and select default
@@ -53,16 +50,23 @@ namespace Book_Finder
             searchComboBox.SelectedItem = "all";
 
             // Add results and select all items
-            string[] resultItems = new string[] { "Title", "Volume ID", "Publisher", "Published Date", "Page Count", "Authors", "Description" };
+            string[] resultItems = new string[] { "Title", "Volume ID", "Blurb", "Publisher", "Published Date", "Page Count", "Authors", "Description"};
             resultsListBox.Items.AddRange(resultItems);
             for (int i = 0; i < resultsListBox.Items.Count; i++)
             {
                 resultsListBox.SetItemChecked(i, true);
             }
+
+            string[] availabilityItems = new string[] { "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link"};
+            availabilityListBox.Items.AddRange(availabilityItems);
+            for (int i = 0; i < availabilityListBox.Items.Count; i++)
+            {
+                availabilityListBox.SetItemChecked(i, true);
+            }
         }
 
 
-        // API Button
+        // Search API Button
         private void APIbutton_Click(object sender, EventArgs e)
         {
             output.Text = "";
@@ -140,12 +144,14 @@ namespace Book_Finder
             }
         }
 
+
         public string ParseBook(JObject bookJson)
         {
             BookObject book = new BookObject(); // Create the book object
 
 
-            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"]; // Reading and storing data
+            JObject volumeInfoObject = (JObject)bookJson["volumeInfo"]; // Reading book info for attributes
+            JObject searchInfoObject = (JObject)bookJson["searchInfo"]; // Reading search info for blurb
 
             StringBuilder sb = new StringBuilder(); // Printing to screen
 
@@ -173,42 +179,50 @@ namespace Book_Finder
 
             if (resultBool[2])
             {
+                //Console.WriteLine("Search info object: " + searchInfoObject.ToString());
+                book.blurb = TryParse(searchInfoObject, "textSnippet");
+                sb.Append(" \r\n");
+                sb.Append("Blurb: " + book.blurb);
+            }
+
+            if (resultBool[3])
+            {
                 book.publisher = TryParse(volumeInfoObject, "publisher");
                 sb.Append("Publisher: " + book.publisher + " \r\n");
             }
 
-            if (resultBool[3])
+            if (resultBool[4])
             {
                 book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
                 sb.Append("Published: " + book.publishedDate + " \r\n");
             }
 
-            if (resultBool[4])
+            if (resultBool[5])
             {
                 string pages = TryParse(volumeInfoObject, "pageCount");
                 book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
                 sb.Append("Page Count: " + book.pageCount + " \r\n");
             }
 
-            if (resultBool[5])
+            if (resultBool[6])
             {
                 JArray authors = (JArray)volumeInfoObject["authors"];
+
+                sb.Append("Authors: ");
 
                 if (authors != null)
                 {
                     foreach (var author in authors)
                     {
                         book.authors.Add(author.ToString());
+                        sb.Append(author + ", ");
                     }
+
                 }
-                sb.Append("Authors: ");
-                foreach (string author in authors)
-                {
-                    sb.Append(author + ", ");
-                }
+                
             }
 
-            if (resultBool[6])
+            if (resultBool[7])
             {
                 book.description = TryParse(volumeInfoObject, "description");
                 sb.Append(" \r\n");
@@ -219,27 +233,31 @@ namespace Book_Finder
             book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
                                         System.Convert.ToBoolean(volumeInfoObject["image"]));
             */
+
             return sb.ToString();
         }
 
         // Have a TryParse method to iteratively check if parsing available for each option
         public string TryParse(JObject bookJson, string toParse)
         {
-            string parsedString;
+            string parsedString = "";
             try
             {
-                if (bookJson[toParse] != null)
+                if (bookJson != null)
                 {
-                    parsedString = bookJson[toParse].ToString();
-                }
-                else
-                {
-                    parsedString = "";
+                    if (bookJson[toParse] != null)
+                    {
+                        parsedString = bookJson[toParse].ToString();
+                    }
+                    else
+                    {
+                        parsedString = "";
+                    }
                 }
             }
             catch
             {
-                return "";
+                return parsedString;
             }
             return parsedString;
         }
@@ -260,6 +278,7 @@ namespace Book_Finder
             public string description { get; set; }
             public ReadingModes readingModes { get; set; }
             public int pageCount { get; set; }
+            public string blurb { get; set; }
         }
 
         [Serializable]
@@ -302,5 +321,20 @@ namespace Book_Finder
             }
         }
 
+        private void selectAvailabilityButton_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < availabilityListBox.Items.Count; i++)
+            {
+                availabilityListBox.SetItemChecked(i, true);
+            }
+        }
+
+        private void deselectAvailabilityButton_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < availabilityListBox.Items.Count; i++)
+            {
+                availabilityListBox.SetItemChecked(i, false);
+            }
+        }
     }
 }
