@@ -52,7 +52,7 @@ namespace Book_Finder
             // Add results and select all items
             string[] resultItems = new string[] { "Title", "Volume ID", "Blurb", "Publisher", "Published Date", "Page Count", "Authors", "Description"};
             resultsListBox.Items.AddRange(resultItems);
-            for (int i = 0; i < resultsListBox.Items.Count; i++)
+            for (int i = 0; i < resultsListBox.Items.Count-1; i++)
             {
                 resultsListBox.SetItemChecked(i, true);
             }
@@ -117,7 +117,12 @@ namespace Book_Finder
             {
                 JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                output.Text = "Number of records: " + bookJson["totalItems"].ToString() + "\r\n \r\n";
+                string text = "Number of records: " + bookJson["totalItems"].ToString() + "\r\n";
+
+                string availability = "Availability: ";
+
+
+                output.Text = text + availability;
 
                 JArray books = (JArray)bookJson["items"];
 
@@ -145,6 +150,7 @@ namespace Book_Finder
         }
 
 
+        // Parses the Json for the Book Info Box
         public string ParseBook(JObject bookJson)
         {
             BookObject book = new BookObject(); // Create the book object
@@ -237,6 +243,53 @@ namespace Book_Finder
             return sb.ToString();
         }
 
+        // Parses the Json for the Availability Box
+        public string ParseAvailability(JObject bookJson)
+        {
+            //"PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
+            StringBuilder sb = new StringBuilder();
+
+            JObject countryObject = (JObject)bookJson["country"]; // Reading country
+            JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
+            JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
+            JObject saleInfoObject = (JObject)bookJson["saleInfo"]; // Reading sale
+
+
+            bool[] availBool = new bool[availabilityListBox.Items.Count];
+            for (int i = 0; i <= availabilityListBox.Items.Count - 1; i++)
+            {
+                availBool[i] = availabilityListBox.GetItemChecked(i);
+            }
+
+            if (availBool[0])
+            {
+                book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
+            }
+            if (availBool[1])
+            {
+
+            }
+            if (availBool[2])
+            {
+
+            }
+            if (availBool[3])
+            {
+
+            }
+            if (availBool[4])
+            {
+
+            }
+            if (availBool[5])
+            {
+
+            }
+
+
+            return sb.ToString();
+        }
+
         // Have a TryParse method to iteratively check if parsing available for each option
         public string TryParse(JObject bookJson, string toParse)
         {
@@ -276,21 +329,21 @@ namespace Book_Finder
             public string publisher { get; set; }
             public string publishedDate { get; set; }
             public string description { get; set; }
-            public ReadingModes readingModes { get; set; }
             public int pageCount { get; set; }
             public string blurb { get; set; }
+
+            public Availability Availability { get; set; }
         }
 
         [Serializable]
-        public class ReadingModes
+        public class Availability //"PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
         {
-            public ReadingModes(bool text, bool image)
-            {
-                this.text = text;
-                this.image = image;
-            }
-            public bool text { get; set; }
-            public bool image { get; set; }
+            public bool pdfAvailable { get; set; }
+            public string pdfLink { get; set; }
+            public bool epubAvailable { get; set; }
+            public string epubLink { get; set; }
+            public bool forSale { get; set; }
+            public string saleLink { get; set; }
         }
 
         // Search box disabled when absolute value active
