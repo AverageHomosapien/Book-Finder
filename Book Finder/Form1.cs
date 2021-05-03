@@ -235,25 +235,13 @@ namespace Book_Finder
                 sb.Append("Description: " + book.description + " \r\n");
             }
 
-            /*
-            book.readingModes = new ReadingModes(System.Convert.ToBoolean(volumeInfoObject["text"]),
-                                        System.Convert.ToBoolean(volumeInfoObject["image"]));
-            */
 
-            return sb.ToString();
-        }
-
-        // Parses the Json for the Availability Box
-        public string ParseAvailability(JObject bookJson)
-        {
-            //"PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
-            StringBuilder sb = new StringBuilder();
-
+            //// Parsing Availability
+            // "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
             JObject countryObject = (JObject)bookJson["country"]; // Reading country
             JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
             JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
             JObject saleInfoObject = (JObject)bookJson["saleInfo"]; // Reading sale
-
 
             bool[] availBool = new bool[availabilityListBox.Items.Count];
             for (int i = 0; i <= availabilityListBox.Items.Count - 1; i++)
@@ -263,56 +251,65 @@ namespace Book_Finder
 
             if (availBool[0])
             {
-                book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
+                book.pdfAvailable = TryParseBool(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[1])
             {
-
+                book.pdfLink = TryParse(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
             if (availBool[2])
             {
-
+                book.epubAvailable = TryParseBool(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[3])
             {
-
+                book.epubLink = TryParse(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
             if (availBool[4])
             {
-
+                book.forSale = TryParseBool(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[5])
             {
-
+                book.saleLink = TryParse(volumeInfoObject, "publishedDate");
+                sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
 
 
             return sb.ToString();
         }
 
-        // Have a TryParse method to iteratively check if parsing available for each option
+        // Trying to parse string Json
         public string TryParse(JObject bookJson, string toParse)
         {
-            string parsedString = "";
-            try
+            if (bookJson == null)
             {
-                if (bookJson != null)
-                {
-                    if (bookJson[toParse] != null)
-                    {
-                        parsedString = bookJson[toParse].ToString();
-                    }
-                    else
-                    {
-                        parsedString = "";
-                    }
-                }
+                return "";
             }
-            catch
+            else if (bookJson[toParse] == null)
             {
-                return parsedString;
+                return "";
             }
-            return parsedString;
+            else return bookJson[toParse].ToString();
+        }
+
+        // Trying to parse boolean Json
+        public bool TryParseBool(JObject bookJson, string toParse)
+        {
+            if (bookJson == null)
+            {
+                return false;
+            }
+            else if (bookJson[toParse] == null)
+            {
+                return false;
+            }
+            else return (bool)bookJson[toParse];
         }
 
 
@@ -321,7 +318,7 @@ namespace Book_Finder
         {
             public BookObject()
             {
-                authors = new List<string>(); // init authors
+                authors = new List<string>(); // init authors in constructor
             }
             public string id { get; set; }
             public string title { get; set; }
@@ -332,12 +329,7 @@ namespace Book_Finder
             public int pageCount { get; set; }
             public string blurb { get; set; }
 
-            public Availability Availability { get; set; }
-        }
-
-        [Serializable]
-        public class Availability //"PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
-        {
+            // Availability
             public bool pdfAvailable { get; set; }
             public string pdfLink { get; set; }
             public bool epubAvailable { get; set; }
@@ -358,6 +350,7 @@ namespace Book_Finder
             searchComboBox.Enabled = true;
         }
 
+        // Selecting all book info
         private void allResultsBox_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < resultsListBox.Items.Count; i++)
@@ -366,6 +359,7 @@ namespace Book_Finder
             }
         }
 
+        // Selecting no book info
         private void noneResultsBox_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < resultsListBox.Items.Count; i++)
@@ -374,6 +368,7 @@ namespace Book_Finder
             }
         }
 
+        // Selecting all availability info
         private void selectAvailabilityButton_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < availabilityListBox.Items.Count; i++)
@@ -382,6 +377,7 @@ namespace Book_Finder
             }
         }
 
+        // Selecting no availability info
         private void deselectAvailabilityButton_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < availabilityListBox.Items.Count; i++)

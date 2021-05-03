@@ -28,3 +28,18 @@ E:\Coding\Github\C#\Book Finder\Book Finder\bin\Debug\System.Net.Http.Formatting
 E:\Coding\Github\C#\Book Finder\Book Finder\bin\Debug\Newtonsoft.Json.xml
 E:\Coding\Github\C#\Book Finder\Book Finder\bin\Debug\System.Net.Http.Formatting.xml
 E:\Coding\Github\C#\Book Finder\Book Finder\obj\Debug\Book Finder.csproj.CopyComplete
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.csprojAssemblyReference.cache
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book_Finder.Form1.resources
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book_Finder.Properties.Resources.resources
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.csproj.GenerateResource.cache
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.csproj.CoreCompileInputs.cache
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.exe
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.pdb
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\Book Finder.exe.config
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\Book Finder.exe
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\Book Finder.pdb
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\Newtonsoft.Json.dll
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\System.Net.Http.Formatting.dll
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\Newtonsoft.Json.xml
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\bin\Debug\System.Net.Http.Formatting.xml
+C:\Users\hamca\Documents\Github\Book-Finder\Book Finder\obj\Debug\Book Finder.csproj.CopyComplete
