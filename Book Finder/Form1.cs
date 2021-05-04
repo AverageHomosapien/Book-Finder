@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -50,14 +51,14 @@ namespace Book_Finder
             searchComboBox.SelectedItem = "all";
 
             // Add results and select all items
-            string[] resultItems = new string[] { "Title", "Volume ID", "Blurb", "Publisher", "Published Date", "Page Count", "Authors", "Description"};
+            string[] resultItems = new string[] { "Title", "Volume ID", "Blurb", "Publisher", "Published Date", "Page Count", "Authors", "Description" };
             resultsListBox.Items.AddRange(resultItems);
-            for (int i = 0; i < resultsListBox.Items.Count-1; i++)
+            for (int i = 0; i < resultsListBox.Items.Count - 1; i++)
             {
                 resultsListBox.SetItemChecked(i, true);
             }
 
-            string[] availabilityItems = new string[] { "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link"};
+            string[] availabilityItems = new string[] { "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link" };
             availabilityListBox.Items.AddRange(availabilityItems);
             for (int i = 0; i < availabilityListBox.Items.Count; i++)
             {
@@ -169,7 +170,7 @@ namespace Book_Finder
 
             if (resultBool[0])
             {
-                book.title = TryParse(volumeInfoObject, "title");
+                book.title = ParseString(volumeInfoObject, "title");
                 sb.Append("Title: " + book.title + " \r\n");
             }
 
@@ -186,27 +187,26 @@ namespace Book_Finder
             if (resultBool[2])
             {
                 //Console.WriteLine("Search info object: " + searchInfoObject.ToString());
-                book.blurb = TryParse(searchInfoObject, "textSnippet");
+                book.blurb = ParseString(searchInfoObject, "textSnippet");
                 sb.Append(" \r\n");
                 sb.Append("Blurb: " + book.blurb);
             }
 
             if (resultBool[3])
             {
-                book.publisher = TryParse(volumeInfoObject, "publisher");
+                book.publisher = ParseString(volumeInfoObject, "publisher");
                 sb.Append("Publisher: " + book.publisher + " \r\n");
             }
 
             if (resultBool[4])
             {
-                book.publishedDate = TryParse(volumeInfoObject, "publishedDate");
+                book.publishedDate = ParseString(volumeInfoObject, "publishedDate");
                 sb.Append("Published: " + book.publishedDate + " \r\n");
             }
 
             if (resultBool[5])
             {
-                string pages = TryParse(volumeInfoObject, "pageCount");
-                book.pageCount = (pages == "") ? 0 : Convert.ToInt32(pages);
+                book.pageCount = ParseInt(volumeInfoObject, "pageCount");
                 sb.Append("Page Count: " + book.pageCount + " \r\n");
             }
 
@@ -225,12 +225,12 @@ namespace Book_Finder
                     }
 
                 }
-                
+
             }
 
             if (resultBool[7])
             {
-                book.description = TryParse(volumeInfoObject, "description");
+                book.description = ParseString(volumeInfoObject, "description");
                 sb.Append(" \r\n");
                 sb.Append("Description: " + book.description + " \r\n");
             }
@@ -238,9 +238,28 @@ namespace Book_Finder
 
             //// Parsing Availability
             // "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
-            JObject countryObject = (JObject)bookJson["country"]; // Reading country
-            JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
-            JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
+            JObject countryObject = ParseJObject(bookJson, "country");
+            if (countryObject.Count == 0)
+            {
+                book.pdfAvailable = false;
+                book.pdfLink = "N/A";
+                book.epubAvailable = false;
+                book.epubLink = "N/A";
+                book.forSale = false;
+                book.saleLink = "N/A";
+            }
+            else
+            {
+                JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
+                JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
+
+                book.pdfAvailable = ParseBool(volumeInfoObject, "publishedDate");
+                book.pdfLink = ParseString(volumeInfoObject, "publishedDate");
+                book.epubAvailable = ParseBool(volumeInfoObject, "publishedDate");
+                book.epubLink = ParseString(volumeInfoObject, "publishedDate");
+                book.forSale = ParseBool(volumeInfoObject, "publishedDate");
+                book.saleLink = ParseString(volumeInfoObject, "publishedDate");
+            }
             JObject saleInfoObject = (JObject)bookJson["saleInfo"]; // Reading sale
 
             bool[] availBool = new bool[availabilityListBox.Items.Count];
@@ -251,41 +270,38 @@ namespace Book_Finder
 
             if (availBool[0])
             {
-                book.pdfAvailable = TryParseBool(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[1])
             {
-                book.pdfLink = TryParse(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
             if (availBool[2])
             {
-                book.epubAvailable = TryParseBool(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[3])
             {
-                book.epubLink = TryParse(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
             if (availBool[4])
             {
-                book.forSale = TryParseBool(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Available: " + book.publisher + " \r\n");
             }
             if (availBool[5])
             {
-                book.saleLink = TryParse(volumeInfoObject, "publishedDate");
                 sb.Append("PDF Link: " + book.publisher + " \r\n");
             }
-
 
             return sb.ToString();
         }
 
-        // Trying to parse string Json
-        public string TryParse(JObject bookJson, string toParse)
+        //https://stackoverflow.com/questions/23906220/deserialize-json-in-a-tryparse-way
+        //https://stackoverflow.com/questions/21030712/detect-if-deserialized-object-is-missing-a-field-with-the-jsonconvert-class-in-j
+        //https://stackoverflow.com/questions/1207731/how-can-i-deserialize-json-to-a-simple-dictionarystring-string-in-asp-net?rq=1
+
+        // Parsing Json string
+        public static string ParseString(JObject bookJson, string toParse)
         {
             if (bookJson == null)
             {
@@ -295,11 +311,11 @@ namespace Book_Finder
             {
                 return "";
             }
-            else return bookJson[toParse].ToString();
+            else return (string)bookJson[toParse];
         }
 
-        // Trying to parse boolean Json
-        public bool TryParseBool(JObject bookJson, string toParse)
+        // Parsing Json boolean
+        public static bool ParseBool(JObject bookJson, string toParse)
         {
             if (bookJson == null)
             {
@@ -310,6 +326,35 @@ namespace Book_Finder
                 return false;
             }
             else return (bool)bookJson[toParse];
+        }
+
+        // Parsing Json integer
+        public static int ParseInt(JObject bookJson, string toParse)
+        {
+            if (bookJson == null)
+            {
+                return 0;
+            }
+            else if (bookJson[toParse] == null)
+            {
+                return 0;
+            }
+            else return (int)bookJson[toParse];
+        }
+
+        // Parsing Json Object
+        public static JObject ParseJObject(JObject bookJson, string toParse)
+        {
+            JObject jo = new JObject();
+            if (bookJson == null)
+            {
+                return jo;
+            }
+            else if (bookJson[toParse] == null)
+            {
+                return jo;
+            }
+            else return (JObject)bookJson[toParse];
         }
 
 
