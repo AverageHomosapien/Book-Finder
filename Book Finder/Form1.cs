@@ -25,16 +25,13 @@ namespace Book_Finder
 
         public const string myLib = "https://www.googleapis.com/books/v1/mylibrary/";
         public const string bookURL = "https://www.googleapis.com/books/v1/volumes/";
-        public const string searchURL = "https://www.googleapis.com/books/v1/volumes";
 
         HttpClient bookClient = new HttpClient();
-        HttpClient searchClient = new HttpClient();
 
         public Form1()
         {
             InitializeComponent();
             bookClient.BaseAddress = new Uri(bookURL);
-            searchClient.BaseAddress = new Uri(searchURL);
         }
 
         // Set up Form
@@ -118,7 +115,7 @@ namespace Book_Finder
             {
                 JObject bookJson = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
-                string text = "Number of records: " + bookJson["totalItems"].ToString() + "\r\n";
+                string text = "Number of records: " + bookJson["totalItems"].ToString() + "\r\n \r\n";
 
                 string availability = "Availability: ";
 
@@ -136,7 +133,8 @@ namespace Book_Finder
                         sb.Append(ParseBook((JObject)book) + "\r\n \r\n");
                     }
                     output.Text += sb.ToString();
-                    infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
+                    //infoBox.Text = "Success: " + (int)response.StatusCode + " " + response.ReasonPhrase; // Infobox success code
+                    infoBox.Text = bookURL + urlParameters;
                 }
                 else
                 {
@@ -173,7 +171,6 @@ namespace Book_Finder
                 book.title = ParseString(volumeInfoObject, "title");
                 sb.Append("Title: " + book.title + " \r\n");
             }
-
             if (resultBool[1])
             {
                 MatchCollection mc = Regex.Matches(bookJson["selfLink"].ToString(), "(?<=volumes/).*"); // Parsing ID
@@ -183,33 +180,27 @@ namespace Book_Finder
                 }
                 sb.Append("Volume ID: " + book.id + "\r\n");
             }
-
             if (resultBool[2])
             {
                 //Console.WriteLine("Search info object: " + searchInfoObject.ToString());
                 book.blurb = ParseString(searchInfoObject, "textSnippet");
-                sb.Append(" \r\n");
                 sb.Append("Blurb: " + book.blurb);
             }
-
             if (resultBool[3])
             {
                 book.publisher = ParseString(volumeInfoObject, "publisher");
                 sb.Append("Publisher: " + book.publisher + " \r\n");
             }
-
             if (resultBool[4])
             {
                 book.publishedDate = ParseString(volumeInfoObject, "publishedDate");
                 sb.Append("Published: " + book.publishedDate + " \r\n");
             }
-
             if (resultBool[5])
             {
                 book.pageCount = ParseInt(volumeInfoObject, "pageCount");
                 sb.Append("Page Count: " + book.pageCount + " \r\n");
             }
-
             if (resultBool[6])
             {
                 JArray authors = (JArray)volumeInfoObject["authors"];
@@ -225,9 +216,9 @@ namespace Book_Finder
                     }
 
                 }
+                sb.Append("\r\n");
 
             }
-
             if (resultBool[7])
             {
                 book.description = ParseString(volumeInfoObject, "description");
@@ -245,23 +236,35 @@ namespace Book_Finder
                 book.pdfLink = "N/A";
                 book.epubAvailable = false;
                 book.epubLink = "N/A";
-                book.forSale = false;
-                book.saleLink = "N/A";
             }
             else
             {
                 JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
                 JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
 
-                book.pdfAvailable = ParseBool(volumeInfoObject, "publishedDate");
-                book.pdfLink = ParseString(volumeInfoObject, "publishedDate");
-                book.epubAvailable = ParseBool(volumeInfoObject, "publishedDate");
-                book.epubLink = ParseString(volumeInfoObject, "publishedDate");
-                book.forSale = ParseBool(volumeInfoObject, "publishedDate");
-                book.saleLink = ParseString(volumeInfoObject, "publishedDate");
+                book.pdfAvailable = ParseBool(pdfObject, "isAvailable");
+                book.pdfLink = ParseString(pdfObject, "acsTokenLink");
+                book.epubAvailable = ParseBool(epubObject, "isAvailable");
+                book.epubLink = ParseString(epubObject, "acsTokenLink");
             }
-            JObject saleInfoObject = (JObject)bookJson["saleInfo"]; // Reading sale
 
+            JObject saleInfoObject = ParseJObject(bookJson, "saleInfo"); // Reading sale
+            if (saleInfoObject.Count == 0)
+            {
+                book.forSale = "Not for sale";
+                book.saleLink = "N/A";
+            }
+            else
+            {
+                book.forSale = ParseString(saleInfoObject, "saleability");
+                book.saleLink = ParseString(saleInfoObject, "buyLink");
+                if (book.saleLink == "")
+                {
+                    book.saleLink = "N/A";
+                }
+            }
+
+            // Retrieving the availability items and items checked
             bool[] availBool = new bool[availabilityListBox.Items.Count];
             for (int i = 0; i <= availabilityListBox.Items.Count - 1; i++)
             {
@@ -270,27 +273,27 @@ namespace Book_Finder
 
             if (availBool[0])
             {
-                sb.Append("PDF Available: " + book.publisher + " \r\n");
+                sb.Append("PDF Available: " + book.pdfAvailable + " \r\n");
             }
             if (availBool[1])
             {
-                sb.Append("PDF Link: " + book.publisher + " \r\n");
+                sb.Append("PDF Link: " + book.pdfLink + " \r\n");
             }
             if (availBool[2])
             {
-                sb.Append("PDF Available: " + book.publisher + " \r\n");
+                sb.Append("EPUB Available: " + book.epubAvailable + " \r\n");
             }
             if (availBool[3])
             {
-                sb.Append("PDF Link: " + book.publisher + " \r\n");
+                sb.Append("EPUB Link: " + book.epubLink + " \r\n");
             }
             if (availBool[4])
             {
-                sb.Append("PDF Available: " + book.publisher + " \r\n");
+                sb.Append("For Sale: " + book.forSale + " \r\n");
             }
             if (availBool[5])
             {
-                sb.Append("PDF Link: " + book.publisher + " \r\n");
+                sb.Append("Sale Link: " + book.saleLink + " \r\n");
             }
 
             return sb.ToString();
@@ -379,7 +382,7 @@ namespace Book_Finder
             public string pdfLink { get; set; }
             public bool epubAvailable { get; set; }
             public string epubLink { get; set; }
-            public bool forSale { get; set; }
+            public string forSale { get; set; }
             public string saleLink { get; set; }
         }
 

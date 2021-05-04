@@ -54,9 +54,9 @@
             // APIbutton
             // 
             this.APIbutton.AccessibleName = "Query API";
-            this.APIbutton.Location = new System.Drawing.Point(128, 11);
+            this.APIbutton.Location = new System.Drawing.Point(110, 11);
             this.APIbutton.Name = "APIbutton";
-            this.APIbutton.Size = new System.Drawing.Size(113, 40);
+            this.APIbutton.Size = new System.Drawing.Size(132, 40);
             this.APIbutton.TabIndex = 0;
             this.APIbutton.Text = "Query API";
             this.APIbutton.UseVisualStyleBackColor = true;
@@ -65,41 +65,41 @@
             // input
             // 
             this.input.AccessibleName = "input";
-            this.input.Location = new System.Drawing.Point(128, 70);
+            this.input.Location = new System.Drawing.Point(110, 70);
             this.input.Name = "input";
-            this.input.Size = new System.Drawing.Size(408, 20);
+            this.input.Size = new System.Drawing.Size(427, 20);
             this.input.TabIndex = 2;
             // 
             // output
             // 
-            this.output.Location = new System.Drawing.Point(39, 153);
+            this.output.Location = new System.Drawing.Point(26, 153);
             this.output.Multiline = true;
             this.output.Name = "output";
             this.output.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.output.Size = new System.Drawing.Size(497, 253);
+            this.output.Size = new System.Drawing.Size(510, 265);
             this.output.TabIndex = 7;
             // 
             // infoBox
             // 
             this.infoBox.AccessibleName = "infoBox";
-            this.infoBox.Location = new System.Drawing.Point(128, 108);
+            this.infoBox.Location = new System.Drawing.Point(110, 108);
             this.infoBox.Name = "infoBox";
-            this.infoBox.Size = new System.Drawing.Size(408, 20);
+            this.infoBox.Size = new System.Drawing.Size(427, 20);
             this.infoBox.TabIndex = 6;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 112);
+            this.label1.Location = new System.Drawing.Point(28, 112);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.Size = new System.Drawing.Size(47, 13);
             this.label1.TabIndex = 8;
-            this.label1.Text = "HTTP Request:";
+            this.label1.Text = "API Call:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(36, 75);
+            this.label2.Location = new System.Drawing.Point(28, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(64, 13);
             this.label2.TabIndex = 9;
@@ -217,7 +217,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(554, 234);
+            this.label6.Location = new System.Drawing.Point(554, 241);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(80, 13);
             this.label6.TabIndex = 21;
@@ -226,14 +226,14 @@
             // availabilityListBox
             // 
             this.availabilityListBox.FormattingEnabled = true;
-            this.availabilityListBox.Location = new System.Drawing.Point(557, 250);
+            this.availabilityListBox.Location = new System.Drawing.Point(557, 258);
             this.availabilityListBox.Name = "availabilityListBox";
             this.availabilityListBox.Size = new System.Drawing.Size(139, 94);
             this.availabilityListBox.TabIndex = 20;
             // 
             // deselectAvailabilityButton
             // 
-            this.deselectAvailabilityButton.Location = new System.Drawing.Point(557, 383);
+            this.deselectAvailabilityButton.Location = new System.Drawing.Point(557, 395);
             this.deselectAvailabilityButton.Name = "deselectAvailabilityButton";
             this.deselectAvailabilityButton.Size = new System.Drawing.Size(139, 23);
             this.deselectAvailabilityButton.TabIndex = 23;
@@ -243,7 +243,7 @@
             // 
             // selectAvailabilityButton
             // 
-            this.selectAvailabilityButton.Location = new System.Drawing.Point(557, 354);
+            this.selectAvailabilityButton.Location = new System.Drawing.Point(557, 366);
             this.selectAvailabilityButton.Name = "selectAvailabilityButton";
             this.selectAvailabilityButton.Size = new System.Drawing.Size(139, 23);
             this.selectAvailabilityButton.TabIndex = 22;
@@ -255,7 +255,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(739, 429);
+            this.ClientSize = new System.Drawing.Size(727, 436);
             this.Controls.Add(this.deselectAvailabilityButton);
             this.Controls.Add(this.selectAvailabilityButton);
             this.Controls.Add(this.label6);
