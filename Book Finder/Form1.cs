@@ -69,7 +69,7 @@ namespace Book_Finder
         {
             output.Text = "";
 
-            String urlParameters;
+            string urlParameters;
             HttpResponseMessage response;
 
             if (radioVolumeID.Checked)
@@ -168,7 +168,7 @@ namespace Book_Finder
 
             if (resultBool[0])
             {
-                book.title = ParseString(volumeInfoObject, "title");
+                book.title = JsonUtilities.ParseJObject<string>(volumeInfoObject, "title");
                 sb.Append("Title: " + book.title + " \r\n");
             }
             if (resultBool[1])
@@ -183,22 +183,22 @@ namespace Book_Finder
             if (resultBool[2])
             {
                 //Console.WriteLine("Search info object: " + searchInfoObject.ToString());
-                book.blurb = ParseString(searchInfoObject, "textSnippet");
+                book.blurb = JsonUtilities.ParseJObject<string>(searchInfoObject, "textSnippet");
                 sb.Append("Blurb: " + book.blurb);
             }
             if (resultBool[3])
             {
-                book.publisher = ParseString(volumeInfoObject, "publisher");
+                book.publisher = JsonUtilities.ParseJObject<string>(volumeInfoObject, "publisher");
                 sb.Append("Publisher: " + book.publisher + " \r\n");
             }
             if (resultBool[4])
             {
-                book.publishedDate = ParseString(volumeInfoObject, "publishedDate");
+                book.publishedDate = JsonUtilities.ParseJObject<string>(volumeInfoObject, "publishedDate");
                 sb.Append("Published: " + book.publishedDate + " \r\n");
             }
             if (resultBool[5])
             {
-                book.pageCount = ParseInt(volumeInfoObject, "pageCount");
+                book.pageCount = JsonUtilities.ParseJObject<int>(volumeInfoObject, "pageCount");
                 sb.Append("Page Count: " + book.pageCount + " \r\n");
             }
             if (resultBool[6])
@@ -221,7 +221,7 @@ namespace Book_Finder
             }
             if (resultBool[7])
             {
-                book.description = ParseString(volumeInfoObject, "description");
+                book.description = JsonUtilities.ParseJObject<string>(volumeInfoObject, "description");
                 sb.Append(" \r\n");
                 sb.Append("Description: " + book.description + " \r\n");
             }
@@ -229,7 +229,7 @@ namespace Book_Finder
 
             //// Parsing Availability
             // "PDF Available", "PDF Link", "Epub Available", "Epub Link", "For Sale", "Sale Link
-            JObject countryObject = ParseJObject(bookJson, "country");
+            JObject countryObject = JsonUtilities.ParseJObject<JObject>(bookJson, "country");
             if (countryObject.Count == 0)
             {
                 book.pdfAvailable = false;
@@ -242,13 +242,13 @@ namespace Book_Finder
                 JObject epubObject = (JObject)countryObject["epub"]; // Reading Epub
                 JObject pdfObject = (JObject)countryObject["pdf"]; // Reading PDF
 
-                book.pdfAvailable = ParseBool(pdfObject, "isAvailable");
-                book.pdfLink = ParseString(pdfObject, "acsTokenLink");
-                book.epubAvailable = ParseBool(epubObject, "isAvailable");
-                book.epubLink = ParseString(epubObject, "acsTokenLink");
+                book.pdfAvailable = JsonUtilities.ParseJObject<bool>(pdfObject, "isAvailable");
+                book.pdfLink = JsonUtilities.ParseJObject<string>(pdfObject, "acsTokenLink");
+                book.epubAvailable = JsonUtilities.ParseJObject<bool>(epubObject, "isAvailable");
+                book.epubLink = JsonUtilities.ParseJObject<string>(epubObject, "acsTokenLink");
             }
 
-            JObject saleInfoObject = ParseJObject(bookJson, "saleInfo"); // Reading sale
+            JObject saleInfoObject = JsonUtilities.ParseJObject<JObject>(bookJson, "saleInfo"); // Reading sale
             if (saleInfoObject.Count == 0)
             {
                 book.forSale = "Not for sale";
@@ -256,8 +256,8 @@ namespace Book_Finder
             }
             else
             {
-                book.forSale = ParseString(saleInfoObject, "saleability");
-                book.saleLink = ParseString(saleInfoObject, "buyLink");
+                book.forSale = JsonUtilities.ParseJObject<string>(saleInfoObject, "saleability");
+                book.saleLink = JsonUtilities.ParseJObject<string>(saleInfoObject, "buyLink");
                 if (book.saleLink == "")
                 {
                     book.saleLink = "N/A";
@@ -297,93 +297,6 @@ namespace Book_Finder
             }
 
             return sb.ToString();
-        }
-
-        //https://stackoverflow.com/questions/23906220/deserialize-json-in-a-tryparse-way
-        //https://stackoverflow.com/questions/21030712/detect-if-deserialized-object-is-missing-a-field-with-the-jsonconvert-class-in-j
-        //https://stackoverflow.com/questions/1207731/how-can-i-deserialize-json-to-a-simple-dictionarystring-string-in-asp-net?rq=1
-
-        // Parsing Json string
-        public static string ParseString(JObject bookJson, string toParse)
-        {
-            if (bookJson == null)
-            {
-                return "";
-            }
-            else if (bookJson[toParse] == null)
-            {
-                return "";
-            }
-            else return (string)bookJson[toParse];
-        }
-
-        // Parsing Json boolean
-        public static bool ParseBool(JObject bookJson, string toParse)
-        {
-            if (bookJson == null)
-            {
-                return false;
-            }
-            else if (bookJson[toParse] == null)
-            {
-                return false;
-            }
-            else return (bool)bookJson[toParse];
-        }
-
-        // Parsing Json integer
-        public static int ParseInt(JObject bookJson, string toParse)
-        {
-            if (bookJson == null)
-            {
-                return 0;
-            }
-            else if (bookJson[toParse] == null)
-            {
-                return 0;
-            }
-            else return (int)bookJson[toParse];
-        }
-
-        // Parsing Json Object
-        public static JObject ParseJObject(JObject bookJson, string toParse)
-        {
-            JObject jo = new JObject();
-            if (bookJson == null)
-            {
-                return jo;
-            }
-            else if (bookJson[toParse] == null)
-            {
-                return jo;
-            }
-            else return (JObject)bookJson[toParse];
-        }
-
-
-        [Serializable]
-        public class BookObject
-        {
-            public BookObject()
-            {
-                authors = new List<string>(); // init authors in constructor
-            }
-            public string id { get; set; }
-            public string title { get; set; }
-            public List<string> authors { get; set; }
-            public string publisher { get; set; }
-            public string publishedDate { get; set; }
-            public string description { get; set; }
-            public int pageCount { get; set; }
-            public string blurb { get; set; }
-
-            // Availability
-            public bool pdfAvailable { get; set; }
-            public string pdfLink { get; set; }
-            public bool epubAvailable { get; set; }
-            public string epubLink { get; set; }
-            public string forSale { get; set; }
-            public string saleLink { get; set; }
         }
 
         // Search box disabled when absolute value active
